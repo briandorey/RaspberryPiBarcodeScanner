@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<products>
+  <product>
+    <productid></productid>
+    <refid></refid>
+    <name></name>
+    <options>
+      <option>
+        <optionid></optionid>
+        <productid></productid>
+        <name></name>
+        <stocklevel></stocklevel>
+        <price></price>
+        <barcode></barcode>
+      </option>
+    </options>
+  </product>
+</products>

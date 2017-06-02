@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="orders">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="order">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element type="xs:integer" name="id" />
+              <xs:element type="xs:date" name="date" />
+              <xs:element type="xs:string" name="status" />
+              <xs:element type="xs:string" name="name" />
+              <xs:element type="xs:string" name="country" />
+              <xs:element type="xs:decimal" name="total" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="item">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element type="xs:string" name="productref" />
+              <xs:element type="xs:string" name="productname" />
+              <xs:element type="xs:integer" name="quantity" />
+              <xs:element type="xs:decimal" name="unitprice" />
+              <xs:element type="xs:integer" name="barcode" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

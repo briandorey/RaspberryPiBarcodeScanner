@@ -1,0 +1,179 @@
+Start with lite image
+
+Setup wifi================================
+
+sudo nano /etc/wpa_supplicant/wpa_supplicant.conf
+
+add 
+
+network={
+    ssid="The_ESSID_from_earlier"
+    psk="Your_wifi_password"
+}
+
+
+Setup static ip============================
+
+sudo nano /etc/dhcpcd.conf
+
+add
+
+interface eth0
+static ip_address=10.0.0.80/24
+static routers=10.0.0.1
+static domain_name_servers=10.0.0.1
+
+Basic Config =============================
+
+sudo raspi-config
+
+Interface options
+Enable SPI, I2C, Serial
+
+Advanced Options
+Expand Filesystem
+
+Display Setup==============================
+
+sudo nano /boot/config.txt
+
+add
+
+enable_uart=1
+dtparam=spi=on
+dtparam=i2c1=on
+dtparam=i2c_arm=on
+dtoverlay=ads7846,cs=1,penirq=18,penirq_pull=2,speed=1000000,keep_vref_on=1,swapxy=1,pmax=255,xohms=60,xmin=200,xmax=3900,ymin=200,ymax=3900
+dtoverlay=pitft35-resistive,rotate=180,speed=62500000,fps=30
+
+sudo nano /boot/cmdline.txt
+
+append file
+
+fbcon=map:10 fbcon=font:VGA8x8 
+
+
+sudo nano /etc/modules
+
+spi-bcm2835
+snd-bcm2835
+i2c-bcm2708
+i2c-dev
+ads7846
+
+sudo nano /etc/modprobe.d/lcd.conf
+
+add
+
+options ads7846_device model=7846 cs=1 gpio_pendown=17  keep_vref_on=1 swap_xy=1 pressure_max=255 x_plate_ohms=60 x_min=200 x_max=3900 y_min=200 y_max=3900
+
+
+sudo nano /etc/X11/xorg.conf.d/99-calibration.conf
+
+add
+
+Section "InputClass"
+    Identifier "calibration"
+    MatchProduct "ADS7846 Touchscreen"
+    Option "Calibration" "126, 3734, 3892, 199"
+    Option "SwapAxes" "1"
+EndSection
+
+
+Disable Screen Blanking
+
+sudo nano /etc/kbd/config
+
+Change
+
+BLANK_TIME=0
+
+POWERDOWN_TIME=0
+
+
+Install Wiring Pi============================
+
+sudo apt-get install git
+git clone git://git.drogon.net/wiringPi
+cd ~/wiringPi
+./build
+
+
+Samba Setup ====================================
+
+sudo apt-get install samba samba-common-bin
+
+sudo nano /etc/samba/smb.conf
+
+update
+
+workgroup = workgroup
+
+wins support = yes
+
+add
+
+[pihome]
+
+   comment= Pi Home
+   path=/home/pi
+   browseable=Yes
+   writeable=Yes
+   only guest=no
+   create mask=0777
+   directory mask=0777
+   public=no
+   
+   
+sudo smbpasswd -a pi
+
+sudo /etc/init.d/samba restart
+
+
+Python Setup ====================================
+
+sudo apt-get install python-smbus python3-smbus python-dev python3-dev python3-serial i2c-tools tk-dev python3-tk python3-pip
+sudo apt-get install python-setuptools libjpeg-dev zlib1g-dev libpng12-dev libfreetype6-dev
+
+sudo pip3 install Pillow
+
+
+GUI Setup =======================================
+
+sudo apt-get install xorg openbox obconf xserver-xorg-video-fbdev
+
+
+sudo nano /usr/share/X11/xorg.conf.d/99-fbdev.conf
+
+add
+
+Section "Device"  
+  Identifier "myfb"
+  Driver "fbdev"
+  Option "fbdev" "/dev/fb1"
+EndSection
+
+
+Configure backlight brightness ===============
+
+sudo nano /etc/rc.local
+
+add
+
+sh -c 'echo "0" > /sys/class/backlight/soc\:backlight/brightness'
+gpio -g mode 18 pwm
+gpio pwmc 300
+gpio -g pwm 18 600
+
+FRAMEBUFFER=/dev/fb1 startx -- -dpi 60
+
+
+
+
+Start the application on boot =====================
+
+sudo nano /etc/xdg/openbox/autostart
+
+add
+
+DISPLAY=:0 python3 /home/pi/ScannerApp/ScannerApp/ScannerApp.py

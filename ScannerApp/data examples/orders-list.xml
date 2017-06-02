@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?><orders>  <order>
+    <id></id>
+    <barcode></barcode>
+    <date></date>
+    <status></status>
+    <name></name>
+    <country></country>
+    <total></total>
+  </order>
+</orders>
